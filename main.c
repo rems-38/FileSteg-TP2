@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 void file_odd(int n) {
     int i = 0, c = 0;
@@ -32,6 +35,30 @@ int file_count_vowels(char *filename) {
     return count;
 }
 
+void readable_txt(char *filename) {
+    FILE *f = fopen(filename, "r");
+    char main[100], second[100];
+    strcpy(main, filename);
+    strcpy(second, "_source.txt");
+    FILE *fout = fopen(strcat(main, second), "w");
+
+    char curr_char;
+    while (curr_char != EOF) {
+        curr_char = fgetc(f);
+        if(isalpha(curr_char) != 0) {
+            if(isupper(curr_char)) {
+                curr_char += 'a' - 'A';
+                fputc(curr_char, fout);
+            } else {
+                fputc(curr_char, fout);
+            }
+        } else {
+            fputc(' ', fout);
+        }
+    }
+}
+
+
 int main() {
     file_odd(100);
 
@@ -40,6 +67,8 @@ int main() {
     scanf("%s", filename);
     int counter = file_count_vowels(filename);
     printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
+
+    readable_txt("utils/transporteur.txt");
 
     return 0;
 }
