@@ -13,6 +13,7 @@ void file_odd(int n) {
         }
         i++;
     }
+    fclose(f);
 }
 
 int file_count_vowels(char *filename) {
@@ -30,9 +31,20 @@ int file_count_vowels(char *filename) {
                 i = tab_len;
             }
         }
-    }    
+    }
+    fclose(file);    
 
     return count;
+}
+
+#include <wchar.h>
+
+int puissance(int a, int b) {
+    int res = 1;
+    for(int i = 0; i < b; i++) {
+        res *= a;
+    }
+    return res;
 }
 
 void readable_txt(char *filename) {
@@ -42,31 +54,46 @@ void readable_txt(char *filename) {
     strcpy(second, "_source.txt");
     FILE *fout = fopen(strcat(main, second), "w");
 
+    char new_char[8];
+    int octet = 0;
     char curr_char;
     while (curr_char != EOF) {
-        curr_char = fgetc(f);
-        if(isalpha(curr_char) != 0) {
-            if(isupper(curr_char)) {
-                curr_char += 'a' - 'A';
-                fputc(curr_char, fout);
-            } else {
-                fputc(curr_char, fout);
+        if(octet == 8) {
+            // conversion du bit en decimal (ex: "01000001" -> 65 (pour la fonction d'après))
+            int tot = 0;
+            for(int i = 0; i < 8; i++) {
+                if(new_char[i] == '1') {
+                    tot += puissance(2, 7-i);
+                }
             }
+            // on écrit le caractère final (btowc convertit un int en char, ex: 65 -> 'A')
+            fprintf(fout, "%c", btowc(tot));
+            octet = 0;
         } else {
-            fputc(' ', fout);
+            curr_char = fgetc(f);
+            if(isalpha(curr_char) != 0) {
+                if(isupper(curr_char)) {
+                    new_char[octet] = '1';
+                } else {
+                    new_char[octet] = '0';
+                }
+                octet++;
+            }
         }
     }
+    fclose(f);
+    fclose(fout);
 }
 
 
 int main() {
-    file_odd(100);
+    // file_odd(100);
 
-    char filename[30];
-    printf("Entrez le nom du fichier : ");
-    scanf("%s", filename);
-    int counter = file_count_vowels(filename);
-    printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
+    // char filename[30];
+    // printf("Entrez le nom du fichier : ");
+    // scanf("%s", filename);
+    // int counter = file_count_vowels(filename);
+    // printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
 
     readable_txt("utils/transporteur.txt");
 
