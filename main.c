@@ -5,7 +5,6 @@ void file_odd(int n) {
     FILE *f = fopen("nombres_impairs.txt", "w");
     while (c < n) {
         if (i % 2 != 0) {
-            // char *ci = i + '0';
             fprintf(f, "%d\n", i);
             c++;
         }
