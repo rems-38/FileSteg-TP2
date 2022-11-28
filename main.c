@@ -87,13 +87,13 @@ void readable_txt(char *filename) {
 
 
 int main() {
-    // file_odd(100);
+    file_odd(100);
 
-    // char filename[30];
-    // printf("Entrez le nom du fichier : ");
-    // scanf("%s", filename);
-    // int counter = file_count_vowels(filename);
-    // printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
+    char filename[30];
+    printf("Entrez le nom du fichier : ");
+    scanf("%s", filename);
+    int counter = file_count_vowels(filename);
+    printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
 
     readable_txt("utils/transporteur.txt");
 
