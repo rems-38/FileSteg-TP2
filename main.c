@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <wchar.h>
 
 void file_odd(int n) {
     int i = 0, c = 0;
@@ -36,8 +37,6 @@ int file_count_vowels(char *filename) {
 
     return count;
 }
-
-#include <wchar.h>
 
 int puissance(int a, int b) {
     int res = 1;

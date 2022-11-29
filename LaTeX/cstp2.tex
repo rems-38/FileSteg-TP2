@@ -1,0 +1,276 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{tikz,tkz-tab}
+\usepackage{mathrsfs}
+\usepackage{listings,chngcntr}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{multicol}
+\usepackage{float,graphicx}
+\usepackage{pstricks,pst-all,pst-plot,pstricks-add,pst-3dplot}
+\usepackage{cases}
+\usepackage{array}
+\usepackage[shortlabels]{enumitem}
+\usepackage{eurosym}
+\usepackage{bbm}
+\usepackage[european, straightvoltages, RPvoltages]{circuitikz}
+\usepackage{diagbox}
+
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\title{CS221 - TP2}
+\author{Vincent MOUCADEAU - Rémi MAZZONE | 2A}
+\date{30/11/2022}
+
+
+\newenvironment{restoretext}%
+    {
+     \begin{adjustwidth}{}{\leftmargin}%
+    }{\end{adjustwidth}
+     }
+     
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr 
+  \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt} 
+  $#1\mskip2mu$\cr}}}
+
+
+\newcommand{\dvec}[1]{\overrightarrow{#1}} % Commande perso pour vecteurs
+\newcommand{\fracvec}[3]{\dfrac{#1}{#2}\dvec{#3}}
+
+     
+\newcommand*\Vc[2][1ex]{\Vcaux#2,,\Vcaux{#1}}% arg optionnel = espacement entre coordonnées
+\def\Vcaux#1,#2,#3,#4\Vcaux#5{%
+    \ensuremath{\left(\vcenter{\baselineskip0pt
+    \halign{\hfil\kern.25em$##$\kern.25em\hfil\crcr
+        #1\cr\noalign{\vskip#5}#2\cr\noalign{\vskip#5}#3\crcr}%
+    }\right)}%
+} 
+
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash }b{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash }b{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash }b{#1}}
+
+\renewcommand{\arraystretch}{1.4}
+
+% -------- PYTHON -------- %
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{languageC}{
+    language=C,
+    aboveskip=3mm,
+    belowskip=3mm,
+    basicstyle={\small\ttfamily},
+    breaklines=true,%
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=14pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasi
+    frame=single,
+    frameround={t}{t}{t}{t},
+    xleftmargin=.2\textwidth, xrightmargin=.2\textwidth
+}
+
+\lstdefinestyle{languageClarge}{
+    language=C,
+    aboveskip=3mm,
+    belowskip=3mm,
+    basicstyle={\small\ttfamily},
+    breaklines=true,%
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=14pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasi
+    frame=single,
+    frameround={t}{t}{t}{t},
+    xleftmargin=.07\textwidth, xrightmargin=.07\textwidth
+}
+
+\lstdefinestyle{pseudoCode}{
+    aboveskip=3mm,
+    belowskip=3mm,
+    basicstyle={\small\ttfamily},
+    breaklines=true,
+    morekeywords={input, output, pour, si, echanger, fin, alors, faire},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{red}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=14pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasi
+    frame=single,
+    frameround={t}{t}{t}{t},
+    xleftmargin=.2\textwidth, xrightmargin=.2\textwidth
+}
+
+\lstdefinestyle{pseudoCodelarge}{
+    aboveskip=3mm,
+    belowskip=3mm,
+    basicstyle={\small\ttfamily},
+    breaklines=true,
+    morekeywords={input, output, pour, si, echanger, fin, alors, faire},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{red}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=14pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasi
+    frame=single,
+    frameround={t}{t}{t}{t},
+    xleftmargin=.1\textwidth, xrightmargin=.1\textwidth
+}
+
+\lstdefinestyle{Makefile}{
+    aboveskip=3mm,
+    belowskip=3mm,
+    basicstyle={\small\ttfamily},
+    breaklines=true,
+    morekeywords={gcc, rm},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{red}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=14pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasi
+    frame=single,
+    frameround={t}{t}{t}{t},
+    xleftmargin=.2\textwidth, xrightmargin=.2\textwidth
+}
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+\renewcommand{\contentsname}{Table des matières}
+
+\begin{document}
+\counterwithin{lstlisting}{section}
+\maketitle
+
+\tableofcontents
+\lstlistoflistings
+
+\newpage
+
+\section{Introduction}
+Dans ce TP, nous allons travailler sur les fichiers et les applications qu'on peut y trouver dans le domaine de la stéganographie.
+
+\section{Travail Préparatoire}
+
+\subsection{Nombres impairs}
+\begin{lstlisting}[style=languageC, caption=Code pour avoir les 100 premiers nombres impairs]
+void file_odd(int n) {
+    int i = 0, c = 0;
+    FILE *f = fopen("nombres_impairs.txt", "w");
+    while (c < n) {
+        if (i % 2 != 0) {
+            fprintf(f, "%d\n", i);
+            c++;
+        }
+        i++;
+    }
+    fclose(f);
+}
+\end{lstlisting}
+
+\subsection{Comptage de voyelles}
+\begin{lstlisting}[style=languageC, caption=Code pour compter le nombre de voyelles dans un fichier texte]
+int file_count_vowels(char *filename) {
+    int count = 0;
+    char vowels[6] = {'a', 'e', 'i', 'o', 'u', 'y'};
+    int tab_len = sizeof(vowels)/sizeof(vowels[0]);
+    FILE *file = fopen(filename, "r");
+    char curr_char;
+
+    while (curr_char != EOF) {
+        curr_char = fgetc(file);
+        for(int i = 0; i < tab_len; i++) {
+            if(curr_char == vowels[i]) {
+                count++;
+                i = tab_len;
+            }
+        }
+    }
+    fclose(file);    
+
+    return count;
+}
+\end{lstlisting}
+
+\subsection{Fichier transporteur into source}
+\begin{lstlisting}[style=pseudoCodelarge, caption=Algorithme en français de ce processus]
+input : fichier f_input
+output : fichier f_output
+ouvrir f_input
+octet = 0
+nouveau_char = ""
+tant que f_input pas termine
+    si octet = 8
+        nouveau_char <- conversion bin to char de nouveau_char
+        ecrire nouveau_char dans f_output
+    sinon
+        evaluer le prochain caractere de f_input
+        si il est alphanumerique
+            si c'est une majuscule
+                nouveau_char <- nouveau_char + '1'
+            sinon
+                nouveau_char <- nouveau_char + '0'
+            fin si
+            octet++
+        fin
+    fin si
+fin tant que
+\end{lstlisting}
+
+\subsection{Makefile} 
+\begin{lstlisting}[style=Makefile, caption=Makefile du projet]
+main: main.o
+	gcc -o $@ $^ -g
+
+main.o: main.c
+	gcc -c $< -g
+
+
+clean:
+	rm -rf *.o main
+\end{lstlisting} 
+
+\section{Stéganographie}
+\subsection{Une application un peu trop visible...}
+
+\subsection{Une application un peu moins visible...}
+
+\section{Conclusion}
+Lors de ce TP, 
+
+\end{document}
