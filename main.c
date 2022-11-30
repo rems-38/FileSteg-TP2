@@ -22,7 +22,7 @@ int file_count_vowels(char *filename) {
     char vowels[12] = {'a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'Y'};
     int tab_len = sizeof(vowels)/sizeof(vowels[0]);
     FILE *file = fopen(filename, "r");
-    char curr_char;
+    int curr_char = 0;
 
     while ((curr_char = fgetc(file)) != EOF) {
         for(int i = 0; i < tab_len; i++) {
@@ -86,13 +86,13 @@ void readable_txt(char *filename) {
 
 
 int main() {
-    // file_odd(100);
+    file_odd(100);
 
-    // char *filename;
-    // printf("Entrez le nom du fichier : ");
-    // scanf("%s", filename);
-    // int counter = file_count_vowels(filename);
-    // printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
+    char *filename;
+    printf("Entrez le nom du fichier : ");
+    scanf("%s", filename);
+    int counter = file_count_vowels(filename);
+    printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
 
     readable_txt("utils/transporteur.txt");
 
