@@ -47,14 +47,15 @@ int puissance(int a, int b) {
 
 void readable_txt(char *filename) {
     FILE *f = fopen(filename, "r");
-    char main[sizeof(filename) + sizeof("_source.txt")], second[sizeof("_source.txt")];
+    char *main = malloc(strlen(filename) + strlen("_source.txt") + 1);
+    char *second = malloc(strlen("_source.txt") + 1);
     strcpy(main, filename);
     strcpy(second, "_source.txt");
     FILE *fout = fopen(strcat(main, second), "w");
 
     char new_char[8];
     int octet = 0;
-    char curr_char;
+    int curr_char = 0;
     while (curr_char != EOF) {
         if(octet == 8) {
             // conversion du bit en decimal (ex: "01000001" -> 65 (pour la fonction d'après))
@@ -64,8 +65,8 @@ void readable_txt(char *filename) {
                     tot += puissance(2, 7-i);
                 }
             }
-            // on écrit le caractère final (btowc convertit un int en char, ex: 65 -> 'A')
-            fprintf(fout, "%c", btowc(tot));
+            // on écrit le caractère final fputc convertie direct l'int en char
+            fputc(tot, fout);
             octet = 0;
         } else {
             curr_char = fgetc(f);
@@ -85,13 +86,13 @@ void readable_txt(char *filename) {
 
 
 int main() {
-    file_odd(100);
+    // file_odd(100);
 
-    char *filename;
-    printf("Entrez le nom du fichier : ");
-    scanf("%s", filename);
-    int counter = file_count_vowels(filename);
-    printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
+    // char *filename;
+    // printf("Entrez le nom du fichier : ");
+    // scanf("%s", filename);
+    // int counter = file_count_vowels(filename);
+    // printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
 
     readable_txt("utils/transporteur.txt");
 
