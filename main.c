@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <wchar.h>
+#include "utils/bitmap.h"
 
 void file_odd(int n) {
     int i = 0, c = 0;
@@ -46,8 +46,19 @@ int puissance(int a, int b) {
     return res;
 }
 
+int bit_to_int(char bit[8]) {
+    int tot = 0;
+    for(int i = 0; i < 8; i++) {
+        if(bit[i] == 1) {
+            tot += puissance(2, 7-i);
+        }
+    }
+    return tot;
+}
+
 void readable_txt(char *filename) {
     FILE *f = fopen(filename, "r");
+
     char *main = malloc(strlen(filename) + strlen("_source.txt") + 1);
     char *second = malloc(strlen("_source.txt") + 1);
     strcpy(main, filename);
@@ -59,23 +70,15 @@ void readable_txt(char *filename) {
     int curr_char = 0;
     while (curr_char != EOF) {
         if(octet == 8) {
-            // conversion du bit en decimal (ex: "01000001" -> 65 (pour la fonction d'après))
-            int tot = 0;
-            for(int i = 0; i < 8; i++) {
-                if(new_char[i] == '1') {
-                    tot += puissance(2, 7-i);
-                }
-            }
-            // on écrit le caractère final fputc convertie direct l'int en char
-            fputc(tot, fout);
+            fputc(bit_to_int(new_char), fout);
             octet = 0;
         } else {
             curr_char = fgetc(f);
             if(isalpha(curr_char) != 0) {
                 if(isupper(curr_char)) {
-                    new_char[octet] = '1';
+                    new_char[octet] = 1;
                 } else {
-                    new_char[octet] = '0';
+                    new_char[octet] = 0;
                 }
                 octet++;
             }
@@ -86,19 +89,56 @@ void readable_txt(char *filename) {
     fclose(fout);
 }
 
+char bit_faible(char octet) {
+    char mask = 1;
+    return mask & octet;
+}
+
+void decode_bmp(char *filename) {
+    FILE *f = fopen(filename, "r");
+    
+    char *main = malloc(strlen(filename) + strlen("_source.jpg") + 1);
+    char *second = malloc(strlen("_source.jpg") + 1);
+    strcpy(main, filename);
+    strcpy(second, "_source.jpg");
+    FILE *fout = fopen(strcat(main, second), "w");
+
+    fichierEntete *header = malloc(sizeof(fichierEntete));
+    imageEntete *imageHeader = malloc(sizeof(imageEntete));
+
+    fread(header, 1, sizeof(fichierEntete), f);
+    fread(imageHeader, 1, sizeof(imageEntete), f);
+    fseek(f, header->offset, SEEK_SET);
+    
+    char pixel, bit[8];
+    int octet = 0;
+    for(int i = 0; i < imageHeader->tailleImage; i++) {
+        pixel = fgetc(f);
+        bit[octet] = bit_faible(pixel);
+        octet++;
+        if(octet == 8) {
+            fputc(bit_to_int(bit), fout);
+            octet = 0;
+        }
+    }
+
+    fclose(f);
+    fclose(fout);
+}
+
 
 int main() {
-    file_odd(100);
+    // file_odd(100);
 
-    char *filename;
-    printf("Entrez le nom du fichier : ");
-    scanf("%s", filename);
-    int counter = file_count_vowels(filename);
-    printf("Le nombre de voyelle dans le fichier est : %d\n\n", counter);
+    // char *filename;
+    // printf("Entrez le nom du fichier : ");
+    // scanf("%s", filename);
+    // int counter = file_count_vowels(filename);
+    // printf("Le nombre de voyelle dans le fichier est : %d\n\n", counter);
 
-    readable_txt("utils/transporteur.txt");
+    // readable_txt("utils/transporteur.txt");
 
-
+    decode_bmp("utils/transporteur.bmp");
 
     return 0;
 }
