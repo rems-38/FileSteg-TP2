@@ -1,0 +1,2 @@
+Ceci est un texte d'exemple qui sert a compter le nombre de voyelle.
+Et c'est génial !

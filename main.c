@@ -14,6 +14,7 @@ void file_odd(int n) {
         }
         i++;
     }
+    printf("Odd numbers generated successfully in file 'nombres_impairs.txt'\n\n");
     fclose(f);
 }
 
@@ -32,8 +33,8 @@ int file_count_vowels(char *filename) {
             }
         }
     }
-    fclose(file);    
 
+    fclose(file);
     return count;
 }
 
@@ -80,6 +81,7 @@ void readable_txt(char *filename) {
             }
         }
     }
+    printf("File '%s' converted successfully in file '%s'\n\n", filename, main);
     fclose(f);
     fclose(fout);
 }
@@ -92,9 +94,11 @@ int main() {
     printf("Entrez le nom du fichier : ");
     scanf("%s", filename);
     int counter = file_count_vowels(filename);
-    printf("Le nombre de voyelle dans le fichier est : %d\n", counter);
+    printf("Le nombre de voyelle dans le fichier est : %d\n\n", counter);
 
     readable_txt("utils/transporteur.txt");
+
+
 
     return 0;
 }
