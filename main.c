@@ -19,13 +19,12 @@ void file_odd(int n) {
 
 int file_count_vowels(char *filename) {
     int count = 0;
-    char vowels[6] = {'a', 'e', 'i', 'o', 'u', 'y'};
+    char vowels[12] = {'a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'Y'};
     int tab_len = sizeof(vowels)/sizeof(vowels[0]);
     FILE *file = fopen(filename, "r");
     char curr_char;
 
-    while (curr_char != EOF) {
-        curr_char = fgetc(file);
+    while ((curr_char = fgetc(file)) != EOF) {
         for(int i = 0; i < tab_len; i++) {
             if(curr_char == vowels[i]) {
                 count++;
@@ -48,7 +47,7 @@ int puissance(int a, int b) {
 
 void readable_txt(char *filename) {
     FILE *f = fopen(filename, "r");
-    char main[100], second[100];
+    char main[sizeof(filename) + sizeof("_source.txt")], second[sizeof("_source.txt")];
     strcpy(main, filename);
     strcpy(second, "_source.txt");
     FILE *fout = fopen(strcat(main, second), "w");
@@ -88,7 +87,7 @@ void readable_txt(char *filename) {
 int main() {
     file_odd(100);
 
-    char filename[30];
+    char *filename;
     printf("Entrez le nom du fichier : ");
     scanf("%s", filename);
     int counter = file_count_vowels(filename);
