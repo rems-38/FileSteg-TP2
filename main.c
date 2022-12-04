@@ -57,6 +57,20 @@ int bit_to_int(char bit[8]) {
     return tot;
 }
 
+void int_to_bin(char source, int bin[8]) {
+    int int_source = (int) source;
+    int i = 0;
+    
+    for(; int_source != 0; i++) {
+        bin[7 - i] = int_source % 2;
+        int_source /= 2;
+    }
+    // compléter le reste avec des zéros pour remplir le tableau
+    for(; i < 8; i++) {
+        bin[7 - i] = 0;
+    }
+}
+
 void readable_txt(char *filename) {
     FILE *f = fopen(filename, "r");
 
@@ -138,39 +152,42 @@ char *decode_bmp(char *filename) {
     fclose(f);
     fclose(fout);
 
+    printf("File decoded succefully\n");
+
     return main;
 }
 
 void encode_file(char *file_source, char *file_secret) {
     FILE *fsource = fopen(file_source, "r");
-    FILE *fsecret = fopen(file_secret, "r");
-    FILE *ftransp = fopen("utils/transporteur_remake.bmp", "w");
+    FILE *fsecret = fopen(file_secret, "r"); // file extrait de transporteur.bmp avec decode_bmp() -> transporteur.bmp_source.jpg
+    FILE *ftransp = fopen("utils/transporteur_remake.bmp", "w"); // nouveau fichier
     
     fichierEntete *header = malloc(sizeof(fichierEntete));
     imageEntete *imageHeader = malloc(sizeof(imageEntete));
 
     fread(header, 1, sizeof(fichierEntete), fsource);
     fwrite(header, 1, sizeof(fichierEntete), ftransp);
+
     fread(imageHeader, 1, sizeof(imageEntete), fsource);
     fwrite(imageHeader, 1, sizeof(imageHeader), ftransp);
 
     int new_bmp_size = 0;
     char octet_source;
-    char bin_secret[8];
+    int bin_secret[8];
 
-    char curr_char = 0;
-    char new_octet = 0;
-    while((curr_char != EOF)) {
-        curr_char = fgetc(fsecret);
-        itoa(curr_char, bin_secret, 2);
+    char char_secret = 0;
+    char new_octet_in_src = 0;
+    while(char_secret != EOF) {
+        char_secret = fgetc(fsecret);
+        int_to_bin(char_secret, bin_secret);
         for(int i = 0; i < 8; i++) {
             octet_source = fgetc(fsource);
-            new_octet = set_bit_faible(octet_source, bin_secret[i]);
-            fputc(new_octet, ftransp);
+            new_octet_in_src = set_bit_faible(octet_source, bin_secret[i]);
+            fputc(new_octet_in_src, ftransp);
             new_bmp_size += 8;
         }
     }
-    
+
     for(int i = new_bmp_size; i < imageHeader->tailleImage; i++) {
         octet_source = fgetc(fsource);
         fputc(octet_source, ftransp);    

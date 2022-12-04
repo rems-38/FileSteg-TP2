@@ -101,7 +101,7 @@
     emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasi
     frame=single,
     frameround={t}{t}{t}{t},
-    xleftmargin=.07\textwidth, xrightmargin=.07\textwidth
+    xleftmargin=.04\textwidth, xrightmargin=.04\textwidth
 }
 
 \lstdefinestyle{pseudoCode}{
@@ -227,7 +227,7 @@ int file_count_vowels(char *filename) {
 }
 \end{lstlisting}
 
-\subsection{Fichier transporteur into source}
+\subsection{Fichier transporteur into source}\label{pseudo_transporteur}
 \begin{lstlisting}[style=pseudoCodelarge, caption=Algorithme en français de ce processus]
 input : fichier f_input
 output : fichier f_output
@@ -268,7 +268,128 @@ clean:
 \section{Stéganographie}
 \subsection{Une application un peu trop visible...}
 
+À partir du code rédigé en pseudo code dans la partie préparatoire (cf. \ref{pseudo_transporteur}), nous avons pu écrire le code correspondant en C. Le voici :
+\begin{lstlisting}[style=languageClarge, caption=Code décodage fichier txt]
+void readable_txt(char *filename) {
+FILE *f = fopen(filename, "r");
+
+char *main = malloc(strlen(filename) + strlen("_source.txt") + 1);
+char *second = malloc(strlen("_source.txt") + 1);
+strcpy(main, filename);
+strcpy(second, "_source.txt");
+FILE *fout = fopen(strcat(main, second), "w");
+
+char new_char[8];
+int octet = 0;
+int curr_char = 0;
+while (curr_char != EOF) {
+    if(octet == 8) {
+        fputc(bit_to_int(new_char), fout);
+        octet = 0;
+    } else {
+        curr_char = fgetc(f);
+        if(isalpha(curr_char) != 0) {
+            if(isupper(curr_char)) {
+                new_char[octet] = 1;
+            } else {
+                new_char[octet] = 0;
+            }
+            octet++;
+        }
+    }
+}
+fclose(f);
+fclose(fout);
+}
+\end{lstlisting}
+Code code va donc parcourir le fichier transporteur et va écrire dans un nouveau fichier le message caché. Pour cela, il va lire le fichier transporteur caractère par caractère. Si le caractère lu est une lettre, il va regarder si c'est une majuscule ou une minuscule. Si c'est une majuscule, il va écrire un 1 dans un tableau, sinon il va écrire un 0. Il va continuer à faire cela jusqu'à ce qu'il ait lu 8 caractères (ce qui correspond donc à 1 octet car on aura inséré 8 bits dans le tableau). Ensuite, il va convertir la chaîne de caractères en un entier et l'écrire dans le fichier de sortie. Il va continuer à faire cela jusqu'à la fin du fichier principal et on aura donc fini de décoder le fichier !
+
 \subsection{Une application un peu moins visible...}
+%mettre question 1
+On a donc 3 champs de structures dans le fichier bitmap.h : fichierEntete, imageEntente et couleurPalette.
+Pour les lire et les afficher, on utilise le code suivant (l'exemple ne montre la procédure que pour un champ avec l'affiche de seulement quelques informations mais c'est la même chose pour les autres) :
+\begin{lstlisting}[style=languageClarge, caption=Code pour lire un champ de la structure bitmap]
+FILE *f = fopen(filename, "r");
+fichierEntete *header = malloc(sizeof(fichierEntete));
+fread(header, 1, sizeof(fichierEntete), f);
+printf("%d\n", header->tailleFichier);
+printf("%d\n", header->offset);
+fclose(f);
+\end{lstlisting}
+
+%question 2
+En partant de ces informations, on a donc pu imaginer le code qui nous sera nécessaire à décoder l'image. On va donc parcourir tous les pixels de l'image source (en commencant après tous les entêtes d'un fichier Bitmap) et on va en extraire le bit de poids faible à chaque fois. Ainsi, on va pouvoir former petit à petit l'image qui avait été cachée.
+\begin{lstlisting}[style=languageClarge, caption=Code pour décoder une image]
+char *decode_bmp(char *filename) {
+FILE *f = fopen(filename, "r");
+
+char *main = malloc(strlen(filename) + strlen("_source.jpg") + 1);
+char *second = malloc(strlen("_source.jpg") + 1);
+strcpy(main, filename);
+strcpy(second, "_source.jpg");
+FILE *fout = fopen(strcat(main, second), "w");
+
+fichierEntete *header = malloc(sizeof(fichierEntete));
+imageEntete *imageHeader = malloc(sizeof(imageEntete));
+
+fread(header, 1, sizeof(fichierEntete), f);
+fread(imageHeader, 1, sizeof(imageEntete), f);
+fseek(f, header->offset, SEEK_SET);
+
+char pixel, bit[8];
+int octet = 0;
+for(int i = 0; i < imageHeader->tailleImage; i++) {
+    pixel = fgetc(f);
+    bit[octet] = get_bit_faible(pixel);
+    octet++;
+    if(octet == 8) {
+        fputc(bit_to_int(bit), fout);
+        octet = 0;
+    }
+}
+
+fclose(f);
+fclose(fout);
+
+printf("File decoded succefully\n");
+
+return main;
+}
+\end{lstlisting}
+Ce code utilise quelques fonctions annexes que nous avons codés afin de rendre cette partie plus compréhensible. Voici donc les extraits des fonctions nécessaires :
+\begin{lstlisting}[style=languageClarge, caption=Fonctions annexes]
+char get_bit_faible(char octet) {
+    char mask = 1;
+    return mask & octet;
+}
+
+int puissance(int a, int b) {
+    int res = 1;
+    for(int i = 0; i < b; i++) {
+        res *= a;
+    }
+    return res;
+}
+int bit_to_int(char bit[8]) {
+    int tot = 0;
+    for(int i = 0; i < 8; i++) {
+        if(bit[i] == 1) {
+            tot += puissance(2, 7-i);
+        }
+    }
+    return tot;
+}
+\end{lstlisting}
+À la suite de l'éxécution de cette fonction, nous avons donc obtenu l'image suivante : \\
+% insérer l'image
+En faisant une rapide recherche d'image inversée sur Google, on a découvert qu'il s'agit en fait de Jonathan Bruce Postel, dit Jon Postel, un célèbre informaticien qui a contribuer à la création d'Internet. \\
+%question 3
+Maintenant que nous avons décodé l'image dans la question précédente, nous allons faire la procédure inverse : nous allons recréer l'image que nous venons de décoder. Dans la question précédente, nous avons pris l'image transporteur.bmp et nous en avons décoder l'image jon_postel.jpg. Désormais, nous allons nous servir de l'image originel.bmp dans laquelle nous allons encoder l'image jon_postel.jpg pour reconstituer le fichier transporteur.bmp.
+
+% insérer le code (qui fonctionne)
+\begin{lstlisting}[style=languageClarge, caption=Code pour encoder une image]
+
+\end{lstlisting}
 
 \section{Conclusion}
 Lors de ce TP, 
