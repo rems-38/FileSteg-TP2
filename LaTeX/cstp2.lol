@@ -6,4 +6,3 @@
 \contentsline {lstlisting}{\numberline {3.2}Code pour lire un champ de la structure bitmap}{5}{}%
 \contentsline {lstlisting}{\numberline {3.3}Code pour décoder une image}{5}{}%
 \contentsline {lstlisting}{\numberline {3.4}Fonctions annexes}{6}{}%
-\contentsline {lstlisting}{\numberline {3.5}Code pour encoder une image}{6}{}%
