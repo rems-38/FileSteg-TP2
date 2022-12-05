@@ -58,17 +58,19 @@ int bit_to_int(char bit[8]) {
 }
 
 void int_to_bin(char source, int bin[8]) {
-    int int_source = (int) source;
-    int i = 0;
-    
-    for(; int_source != 0; i++) {
-        bin[7 - i] = int_source % 2;
-        int_source /= 2;
+    char mask = 1;
+    for(int i = 0; i < 7; i++) {
+        if(mask << i & source) {
+            bin[i] = 1;
+        } else {
+            bin[i] = 0;
+        }
     }
-    // compléter le reste avec des zéros pour remplir le tableau
-    for(; i < 8; i++) {
-        bin[7 - i] = 0;
+    printf("%d -> ", source);
+    for(int i = 0; i < 8; i++) {
+        printf("%d", bin[i]);
     }
+    printf("\n");
 }
 
 void readable_txt(char *filename) {
@@ -162,29 +164,37 @@ void encode_file(char *file_source, char *file_secret) {
     FILE *fsecret = fopen(file_secret, "r"); // file extrait de transporteur.bmp avec decode_bmp() -> transporteur.bmp_source.jpg
     FILE *ftransp = fopen("utils/transporteur_remake.bmp", "w"); // nouveau fichier
     
+    char temp = fgetc(fsecret);
+
     fichierEntete *header = malloc(sizeof(fichierEntete));
     imageEntete *imageHeader = malloc(sizeof(imageEntete));
 
-    fread(header, 1, sizeof(fichierEntete), fsource);
+    fread(header, 1, sizeof(fichierEntete), fsource); // c'est l'inverse entre le 1 et le sizeof !!
     fwrite(header, 1, sizeof(fichierEntete), ftransp);
 
     fread(imageHeader, 1, sizeof(imageEntete), fsource);
-    fwrite(imageHeader, 1, sizeof(imageHeader), ftransp);
+    fwrite(imageHeader, 1, sizeof(imageEntete), ftransp);
 
     int new_bmp_size = 0;
     char octet_source;
     int bin_secret[8];
 
-    char char_secret = 0;
+    unsigned char char_secret = 0;
     char new_octet_in_src = 0;
-    while(char_secret != EOF) {
+    
+    //Get file length
+    fseek(fsecret, 0, SEEK_END);
+    long fileLen = ftell(fsecret);
+    fseek(fsecret, 0, SEEK_SET);
+    printf("%ld\n", fileLen);
+
+    for(int counter = 0; counter < fileLen; counter += 8) {
         char_secret = fgetc(fsecret);
         int_to_bin(char_secret, bin_secret);
         for(int i = 0; i < 8; i++) {
             octet_source = fgetc(fsource);
             new_octet_in_src = set_bit_faible(octet_source, bin_secret[i]);
             fputc(new_octet_in_src, ftransp);
-            new_bmp_size += 8;
         }
     }
 
@@ -192,6 +202,10 @@ void encode_file(char *file_source, char *file_secret) {
         octet_source = fgetc(fsource);
         fputc(octet_source, ftransp);    
     }
+
+    fclose(fsource);
+    fclose(fsecret);
+    fclose(ftransp);
 }
 
 
@@ -206,9 +220,9 @@ int main() {
 
     // readable_txt("utils/transporteur.txt");
 
-    char *secret_file = decode_bmp("utils/transporteur.bmp");
-
-    encode_file("utils/originel.bmp", secret_file);
+    // char *secret_file = decode_bmp("utils/transporteur.bmp");
+    // char *secret_file = decode_bmp("utils/transporteur_remake.bmp");
+    encode_file("utils/originel.bmp", "utils/transporteur.bmp_source.jpg");
 
     return 0;
 }
