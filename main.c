@@ -57,20 +57,22 @@ int bit_to_int(char bit[8]) {
     return tot;
 }
 
-void int_to_bin(char source, int bin[8]) {
+void int_to_bin(unsigned char source, int bin[8]) {
+    // Marche niquel
+    // INFO: bit[0] = bit de poids faible
     char mask = 1;
-    for(int i = 0; i < 7; i++) {
-        if(mask << i & source) {
+    for(int i = 0; i < 8; i++) {
+        if((mask << i) & source) {
             bin[i] = 1;
         } else {
             bin[i] = 0;
         }
     }
-    printf("%d -> ", source);
-    for(int i = 0; i < 8; i++) {
-        printf("%d", bin[i]);
-    }
-    printf("\n");
+    // printf("%d -> ", source);
+    // for(int i = 0; i < 8; i++) {
+    //     printf("%d", bin[7-i]);
+    // }
+    // printf("\n");
 }
 
 void readable_txt(char *filename) {
@@ -193,14 +195,12 @@ void encode_file(char *file_source, char *file_secret) {
         int_to_bin(char_secret, bin_secret);
         for(int i = 0; i < 8; i++) {
             octet_source = fgetc(fsource);
-            new_octet_in_src = set_bit_faible(octet_source, bin_secret[i]);
+            new_octet_in_src = set_bit_faible(octet_source, bin_secret[7-i]);
             fputc(new_octet_in_src, ftransp);
         }
-    }
-
-    for(int i = new_bmp_size; i < imageHeader->tailleImage; i++) {
-        octet_source = fgetc(fsource);
-        fputc(octet_source, ftransp);    
+        for(int i = 0; i < 8; i++) {
+            bin_secret[i] = 0;
+        }
     }
 
     fclose(fsource);
@@ -221,7 +221,7 @@ int main() {
     // readable_txt("utils/transporteur.txt");
 
     // char *secret_file = decode_bmp("utils/transporteur.bmp");
-    // char *secret_file = decode_bmp("utils/transporteur_remake.bmp");
+    char *secret_file = decode_bmp("utils/transporteur_remake.bmp");
     encode_file("utils/originel.bmp", "utils/transporteur.bmp_source.jpg");
 
     return 0;
