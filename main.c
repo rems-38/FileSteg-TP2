@@ -188,9 +188,8 @@ void encode_file(char *file_source, char *file_secret) {
     fseek(fsecret, 0, SEEK_END);
     long fileLen = ftell(fsecret);
     fseek(fsecret, 0, SEEK_SET);
-    printf("%ld\n", fileLen);
 
-    for(int counter = 0; counter < fileLen; counter += 8) {
+    for(int counter = 0; counter < fileLen; counter += 1) {
         char_secret = fgetc(fsecret);
         int_to_bin(char_secret, bin_secret);
         for(int i = 0; i < 8; i++) {
