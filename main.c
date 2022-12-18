@@ -156,15 +156,20 @@ char *decode_bmp(char *filename) {
     fclose(f);
     fclose(fout);
 
-    printf("File decoded succefully\n");
+    printf("File '%s' successfully decoded in file '%s'\n\n", filename, main);
 
     return main;
 }
 
-void encode_file(char *file_source, char *file_secret) {
+char *encode_file(char *file_source, char *file_secret) {
     FILE *fsource = fopen(file_source, "r");
     FILE *fsecret = fopen(file_secret, "r"); // file extrait de transporteur.bmp avec decode_bmp() -> transporteur.bmp_source.jpg
-    FILE *ftransp = fopen("utils/transporteur_remake.bmp", "w"); // nouveau fichier
+
+    char *remake = malloc(strlen(file_secret) + strlen("_remake.bmp") + 1);
+    char *second = malloc(strlen("_remake.bmp") + 1);
+    strcpy(remake, file_secret);
+    strcpy(second, "_remake.bmp");
+    FILE *ftransp = fopen(strcat(remake, second), "w"); // nouveau fichier
     
     char temp = fgetc(fsecret);
 
@@ -205,23 +210,27 @@ void encode_file(char *file_source, char *file_secret) {
     fclose(fsource);
     fclose(fsecret);
     fclose(ftransp);
+
+    printf("Secret file '%s' successfully encoded in '%s' with '%s' as original file\n\n", file_secret, remake, file_source);
+
+    return remake;
 }
 
 
 int main() {
-    // file_odd(100);
+    file_odd(100);
 
-    // char *filename;
-    // printf("Entrez le nom du fichier : ");
-    // scanf("%s", filename);
-    // int counter = file_count_vowels(filename);
-    // printf("Le nombre de voyelle dans le fichier est : %d\n\n", counter);
+    char *filename;
+    printf("Fichier voyelles : vowels.txt\n");
+    int counter = file_count_vowels("./vowels.txt");
+    printf("Le nombre de voyelle dans le fichier est : %d\n\n", counter);
 
-    // readable_txt("utils/transporteur.txt");
+    readable_txt("utils/transporteur.txt");
 
-    // char *secret_file = decode_bmp("utils/transporteur.bmp");
-    char *secret_file = decode_bmp("utils/transporteur_remake.bmp");
-    encode_file("utils/originel.bmp", "utils/transporteur.bmp_source.jpg");
+    char *secret_file = decode_bmp("utils/transporteur.bmp");
+    char *file_encode = encode_file("utils/originel.bmp", secret_file);
+
+    decode_bmp(file_encode);
 
     return 0;
 }

@@ -305,7 +305,6 @@ fclose(fout);
 Code code va donc parcourir le fichier transporteur et va écrire dans un nouveau fichier le message caché. Pour cela, il va lire le fichier transporteur caractère par caractère. Si le caractère lu est une lettre, il va regarder si c'est une majuscule ou une minuscule. Si c'est une majuscule, il va écrire un 1 dans un tableau, sinon il va écrire un 0. Il va continuer à faire cela jusqu'à ce qu'il ait lu 8 caractères (ce qui correspond donc à 1 octet car on aura inséré 8 bits dans le tableau). Ensuite, il va convertir la chaîne de caractères en un entier et l'écrire dans le fichier de sortie. Il va continuer à faire cela jusqu'à la fin du fichier principal et on aura donc fini de décoder le fichier !
 
 \subsection{Une application un peu moins visible...}
-%mettre question 1
 On a donc 3 champs de structures dans le fichier bitmap.h : fichierEntete, imageEntente et couleurPalette.
 Pour les lire et les afficher, on utilise le code suivant (l'exemple ne montre la procédure que pour un champ avec l'affiche de seulement quelques informations mais c'est la même chose pour les autres) :
 \begin{lstlisting}[style=languageClarge, caption=Code pour lire un champ de la structure bitmap]
@@ -317,7 +316,6 @@ printf("%d\n", header->offset);
 fclose(f);
 \end{lstlisting}
 
-%question 2
 En partant de ces informations, on a donc pu imaginer le code qui nous sera nécessaire à décoder l'image. On va donc parcourir tous les pixels de l'image source (en commencant après tous les entêtes d'un fichier Bitmap) et on va en extraire le bit de poids faible à chaque fois. Ainsi, on va pouvoir former petit à petit l'image qui avait été cachée.
 \begin{lstlisting}[style=languageClarge, caption=Code pour décoder une image]
 char *decode_bmp(char *filename) {
@@ -389,13 +387,83 @@ int bit_to_int(char bit[8]) {
 \newline
 En faisant une rapide recherche d'image inversée sur Google, on a découvert qu'il s'agit en fait de Jonathan Bruce Postel, dit Jon Postel, un célèbre informaticien qui a contribué à la création d'Internet. \\
 %question 3
-Maintenant que nous avons décodé l'image dans la question précédente, nous allons faire la procédure inverse : nous allons recréer l'image que nous venons de décoder. Dans la question précédente, nous avons pris l'image transporteur.bmp et nous en avons décoder l'image jon\_postel.jpg. Désormais, nous allons nous servir de l'image originel.bmp dans laquelle nous allons encoder l'image jon\_postel.jpg pour reconstituer le fichier transporteur.bmp.
-% insérer le code (qui fonctionne)
-% \begin{lstlisting}[style=languageClarge, caption=Code pour encoder une image]
+Maintenant que nous avons décodé l'image dans la question précédente, nous allons faire la procédure inverse : nous allons recréer l'image que nous venons de décoder. Dans la question précédente, nous avons pris l'image transporteur.bmp et nous en avons décoder l'image jon\_postel.jpg. Désormais, nous allons nous servir de l'image originel.bmp dans laquelle nous allons encoder l'image jon\_postel.jpg pour reconstituer le fichier transporteur.bmp. \\
+Voici le code correspondant
+\begin{lstlisting}[style=languageClarge, caption=Encodage d'un jpg secret dans une image bmp]
+FILE *fsource = fopen(file_source, "r");
+FILE *fsecret = fopen(file_secret, "r"); // file extrait de transporteur.bmp avec decode_bmp() -> transporteur.bmp_source.jpg
 
-% \end{lstlisting}
+char *remake = malloc(strlen(file_secret) + strlen("_remake.bmp") + 1);
+char *second = malloc(strlen("_remake.bmp") + 1);
+strcpy(remake, file_secret);
+strcpy(second, "_remake.bmp");
+FILE *ftransp = fopen(strcat(remake, second), "w"); // nouveau fichier
+
+char temp = fgetc(fsecret);
+
+fichierEntete *header = malloc(sizeof(fichierEntete));
+imageEntete *imageHeader = malloc(sizeof(imageEntete));
+
+fread(header, 1, sizeof(fichierEntete), fsource); // c'est l'inverse entre le 1 et le sizeof !!
+fwrite(header, 1, sizeof(fichierEntete), ftransp);
+
+fread(imageHeader, 1, sizeof(imageEntete), fsource);
+fwrite(imageHeader, 1, sizeof(imageEntete), ftransp);
+
+int new_bmp_size = 0;
+char octet_source;
+int bin_secret[8];
+
+unsigned char char_secret = 0;
+char new_octet_in_src = 0;
+
+//Get file length
+fseek(fsecret, 0, SEEK_END);
+long fileLen = ftell(fsecret);
+fseek(fsecret, 0, SEEK_SET);
+
+for(int counter = 0; counter < fileLen; counter += 1) {
+    char_secret = fgetc(fsecret);
+    int_to_bin(char_secret, bin_secret);
+    for(int i = 0; i < 8; i++) {
+        octet_source = fgetc(fsource);
+        new_octet_in_src = set_bit_faible(octet_source, bin_secret[7-i]);
+        fputc(new_octet_in_src, ftransp);
+    }
+    for(int i = 0; i < 8; i++) {
+        bin_secret[i] = 0;
+    }
+}
+
+fclose(fsource);
+fclose(fsecret);
+fclose(ftransp);
+
+printf("Secret file '%s' successfully encoded in '%s' with '%s' as original file\n\n", file_secret, remake, file_source);
+
+return remake;
+\end{lstlisting}
+
+On a donc bien réussi à faire ce que l'on voulait et pour vérifier, on peut se reservir de la fonction de décodage pour décoder le fichier que l'on vient d'encoder et vérifier que l'on obtient bien l'image secrete !
 
 \section{Conclusion}
-Lors de ce TP, 
+Nous avons donc terminé ce TP, voici le code inséré dans la fonction main pour faire toutes les actions d'un coup :
+\begin[lstlisting][style=languageClarge, caption=Fonction main]
+file_odd(100);
 
+char *filename;
+printf("Fichier voyelles : vowels.txt\n");
+int counter = file_count_vowels("./vowels.txt");
+printf("Le nombre de voyelle dans le fichier est : %d\n\n", counter);
+
+readable_txt("utils/transporteur.txt");
+
+char *secret_file = decode_bmp("utils/transporteur.bmp");
+char *file_encode = encode_file("utils/originel.bmp", secret_file);
+
+decode_bmp(file_encode);
+\end[lstlisting]
+
+Nous avons beaucoup apprécié faire ce TP qui nous as appris beaucoup de techniques de stéganographie. Il a été très enrichissant car nous n'avons pas l'habitude de manipuler les fichiers à ce point en lisant seulement certains octet afin de créer ou des nouveaux fichiers encodés ou décodés par exemple donc c'était une bonne expérience ! \\
+Nous pouvons donc maintenant nous envoyer des images secrètes avec nos propres fonctions d'encodage et ça, c'est cool !
 \end{document}
