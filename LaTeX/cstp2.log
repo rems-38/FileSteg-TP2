@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.10)  4 DEC 2022 17:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.10)  20 DEC 2022 09:40
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1448,25 +1448,25 @@ LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 2
  (/usr/local/texlive/2022/texmf-dist/tex/latex/base/ts1cmtt.fd
 File: ts1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 ) [3] [4] [5]
-<pictures/secret.jpg, id=28, 275.0275pt x 296.10625pt>
+<pictures/secret.jpg, id=29, 275.0275pt x 296.10625pt>
 File: pictures/secret.jpg Graphic file (type jpg)
 <use pictures/secret.jpg>
-Package pdftex.def Info: pictures/secret.jpg  used on input line 386.
+Package pdftex.def Info: pictures/secret.jpg  used on input line 384.
 (pdftex.def)             Requested size: 142.26378pt x 153.17189pt.
- [6 <./pictures/secret.jpg>] [7] (./cstp2.aux) ) 
+ [6 <./pictures/secret.jpg>] [7] [8] [9] (./cstp2.aux) ) 
 Here is how much of TeX's memory you used:
- 43018 strings out of 475071
- 1035227 string characters out of 5778915
- 2097057 words of memory out of 5000000
- 63792 multiletter control sequences out of 15000+600000
- 480435 words of font info for 73 fonts, out of 8000000 for 9000
+ 43091 strings out of 475071
+ 1036252 string characters out of 5778915
+ 2101057 words of memory out of 5000000
+ 63864 multiletter control sequences out of 15000+600000
+ 480604 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  131i,7n,133p,819b,1827s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
-Output written on cstp2.pdf (7 pages, 163500 bytes).
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
+Output written on cstp2.pdf (9 pages, 176227 bytes).
 PDF statistics:
- 68 PDF objects out of 1000 (max. 8388607)
- 43 compressed objects within 1 object stream
+ 79 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  18 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -399,7 +399,7 @@ strcpy(remake, file_secret);
 strcpy(second, "_remake.bmp");
 FILE *ftransp = fopen(strcat(remake, second), "w"); // nouveau fichier
 
-char temp = fgetc(fsecret);
+char temp = fgetc(fsecret); 
 
 fichierEntete *header = malloc(sizeof(fichierEntete));
 imageEntete *imageHeader = malloc(sizeof(imageEntete));
@@ -444,11 +444,22 @@ printf("Secret file '%s' successfully encoded in '%s' with '%s' as original file
 return remake;
 \end{lstlisting}
 
+\begin{lstlisting}[style=languageClarge, caption=Fonction \texttt{set\_bit\_faible}]
+char set_bit_faible(char octet, char bit) {
+    char mask = 1;
+    if(bit == 1) {
+        return octet | mask;
+    } else {
+        return octet & ~mask;
+    }
+}
+\end{lstlisting}
+
 On a donc bien réussi à faire ce que l'on voulait et pour vérifier, on peut se reservir de la fonction de décodage pour décoder le fichier que l'on vient d'encoder et vérifier que l'on obtient bien l'image secrete !
 
 \section{Conclusion}
 Nous avons donc terminé ce TP, voici le code inséré dans la fonction main pour faire toutes les actions d'un coup :
-\begin[lstlisting][style=languageClarge, caption=Fonction main]
+\begin{lstlisting}[style=languageClarge, caption=Fonction main]
 file_odd(100);
 
 char *filename;
@@ -462,7 +473,7 @@ char *secret_file = decode_bmp("utils/transporteur.bmp");
 char *file_encode = encode_file("utils/originel.bmp", secret_file);
 
 decode_bmp(file_encode);
-\end[lstlisting]
+\end{lstlisting}
 
 Nous avons beaucoup apprécié faire ce TP qui nous as appris beaucoup de techniques de stéganographie. Il a été très enrichissant car nous n'avons pas l'habitude de manipuler les fichiers à ce point en lisant seulement certains octet afin de créer ou des nouveaux fichiers encodés ou décodés par exemple donc c'était une bonne expérience ! \\
 Nous pouvons donc maintenant nous envoyer des images secrètes avec nos propres fonctions d'encodage et ça, c'est cool !

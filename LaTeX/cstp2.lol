@@ -6,3 +6,6 @@
 \contentsline {lstlisting}{\numberline {3.2}Code pour lire un champ de la structure bitmap}{5}{}%
 \contentsline {lstlisting}{\numberline {3.3}Code pour décoder une image}{5}{}%
 \contentsline {lstlisting}{\numberline {3.4}Fonctions annexes}{6}{}%
+\contentsline {lstlisting}{\numberline {3.5}Encodage d'un jpg secret dans une image bmp}{7}{}%
+\contentsline {lstlisting}{\numberline {3.6}Fonction \texttt {set\_bit\_faible}}{8}{}%
+\contentsline {lstlisting}{\numberline {4.1}Fonction main}{8}{}%
